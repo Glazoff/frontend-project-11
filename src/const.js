@@ -1,5 +1,5 @@
 export const STATUS_FORM = {
   VALID: 'valid',
-  IN_VALID: 'invalid',
+  INVALID: 'invalid',
   IS_SAME: 'isSame'
 }

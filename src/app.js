@@ -1,42 +1,39 @@
-import {string} from 'yup'
 import onChange from 'on-change'
+import {render} from './view';
+import {validateUrl} from './utils/validateUrl'
 import {STATUS_FORM} from './const'
 
-const validateUrl = (url, state) => {
-  const schema = string().required().url().notOneOf(state.feeds);
+const successHandle = (state, url) => {
+  const input = document.getElementById('url-input')
 
-  return schema.validate(url)
+  input.value = ''
+  input.focus()
+  state.feeds.push(url)
+  state.stateForm.errors = []
+  state.stateForm.status = STATUS_FORM.VALID
 }
 
-export default () => {
+const failHandle = (state, errors) => {
+  state.stateForm.errors.push(...errors)
+  state.stateForm.status = STATUS_FORM.INVALID
+}
+
+const createHandlerSubmit = (state) => (e) => {
+  e.preventDefault()
+  const data = new FormData(e.target)
+  const url = data.get('url').trim()
+
+  validateUrl(url, state)
+    .then(() => successHandle(state, url))
+    .catch(({errors}) => failHandle(state, errors))
+}
+
+export default (initalState) => {
   const form = document.querySelector('.rss-form')
-  const input = document.getElementById('url-input')
-  const state = {
-    feeds: [],
-    stateForm: {
-      status: STATUS_FORM.VALID, // valid / invalid / isSame
-    }
-  }
 
-  const watchedObject = onChange(state, function (path, value) {
-    console.log('this:', this);
-    console.log('path:', path);
-    console.log('value:', value);
-  });
+  // create State
+  const state = onChange(initalState, render);
 
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault()
-
-    const data = new FormData(e.target)
-    const url = data.get('url')
-
-    validateUrl(url, watchedObject)
-      .then(() => {
-        watchedObject.feeds.push(url)
-        input.value = ''
-        input.focus()
-      })
-      .catch((err) => console.log(err))
-  })
+  const handlerSubmit = createHandlerSubmit(state)
+  form.addEventListener('submit', handlerSubmit)
 }
