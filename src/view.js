@@ -20,10 +20,20 @@ function renderTextDanger(errors, i18) {
   });
 }
 
-function renderInput(value) {
+function getTitleNode(text) {
+  const wrapper = document.createElement('div')
+  wrapper.classList.add('card-body')
+  const title = document.createElement('h2')
+  title.classList.add(["card-title", "h4"])
+  title.textContent = text
+  wrapper.appendChild(title)
+  return wrapper
+}
+
+function renderInput(status) {
   const formControl = document.querySelector('.form-control')
 
-  if (value === STATUS_FORM.INVALID) {
+  if (status === STATUS_FORM.INVALID) {
     formControl.classList.add('is-invalid')
     return
   }
@@ -31,12 +41,40 @@ function renderInput(value) {
   formControl.classList.remove('is-invalid')
 }
 
-function renderPosts(v) {
-  console.log("renderPosts", v)
-}
+function renderPosts(posts, i18) {
+  const container = document.querySelector('.posts')
+  console.log("renderPosts", posts)
+  container.innerHTML = ''
 
-function renderFeeds(v) {
-  console.log("renderFeeds", v)
+  if (posts.length) {
+    const nodeTitle = getTitleNode(i18('posts'))
+    const list = document.createElement('ul')
+    list.classList.add('list-group', 'border-0' ,'rounded-0')
+
+    posts.forEach(({title, link}) => {
+      const itemList = document.createElement('li')
+      itemList.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0')
+      const linkPost = document.createElement('a')
+      linkPost.classList.add('fw-bold')
+      linkPost.setAttribute('href', link)
+      linkPost.textContent = title
+
+      const button = document.createElement('button')
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm')
+      button.textContent = i18('show')
+      itemList.appendChild(linkPost)
+      itemList.appendChild(button)
+
+      list.appendChild(itemList)
+    })
+
+    container.appendChild(nodeTitle)
+    container.appendChild(list)
+  }
+} 
+
+function renderFeeds(feeds) {
+  console.log("renderFeeds", feeds)
 
 }
 
@@ -50,7 +88,7 @@ const initView = (i18) => {
         renderInput(value)
         break;
       case 'posts':
-        renderPosts(value)
+        renderPosts(value, i18)
         break;
       case 'feeds':
         renderFeeds(value)

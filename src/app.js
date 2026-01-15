@@ -36,7 +36,7 @@ const createHandlerSubmit = (state) => (e) => {
   
       successHandler(state, url, feed, posts)
     })
-    .catch(({message}) => failHandler(state, message))
+    // .catch(({message}) => failHandler(state, message))
 }
 
 export default (initalState, translation) => {
