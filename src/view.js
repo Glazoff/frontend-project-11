@@ -31,6 +31,15 @@ function renderInput(value) {
   formControl.classList.remove('is-invalid')
 }
 
+function renderPosts(v) {
+  console.log("renderPosts", v)
+}
+
+function renderFeeds(v) {
+  console.log("renderFeeds", v)
+
+}
+
 const initView = (i18) => {
   function render(path, value) {
     switch(path) {
@@ -39,6 +48,12 @@ const initView = (i18) => {
         break;
       case 'stateForm.status':
         renderInput(value)
+        break;
+      case 'posts':
+        renderPosts(value)
+        break;
+      case 'feeds':
+        renderFeeds(value)
         break;
     }
   }

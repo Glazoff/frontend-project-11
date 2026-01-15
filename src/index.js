@@ -5,6 +5,8 @@ import './style.css'
 
 const initalState = {
   feeds: [],
+  rssUrls: [],
+  posts: [],
   stateForm: {
     status: STATUS_FORM.VALID, // valid / invalid
     errors: [],
@@ -12,4 +14,4 @@ const initalState = {
 }
 
 i18.init()
-  .then((t) => app(initalState, t))
+  .then((translation) => app(initalState, translation))

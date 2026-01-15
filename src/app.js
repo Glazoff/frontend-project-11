@@ -2,13 +2,17 @@ import onChange from 'on-change'
 import {initView} from './view';
 import {validateUrl} from './utils/validateUrl'
 import {STATUS_FORM} from './const'
+import {getPosts} from './utils/axios';
+import {xmlParser} from './utils/parser'
 
-const successHandler = (state, url) => {
+const successHandler = (state, url, feed, posts) => {
   const input = document.getElementById('url-input')
 
   input.value = ''
   input.focus()
-  state.feeds.push(url)
+  state.rssUrls.push(url)
+  state.feeds.push(feed)
+  state.posts.push(...posts)
   state.stateForm.errors = []
   state.stateForm.status = STATUS_FORM.VALID
 }
@@ -26,7 +30,12 @@ const createHandlerSubmit = (state) => (e) => {
   const url = data.get('url').trim()
 
   validateUrl(url, state)
-    .then(() => successHandler(state, url))
+    .then(() => getPosts(url))
+    .then(({data}) => {
+      const {feed, posts} = xmlParser(data.contents)
+  
+      successHandler(state, url, feed, posts)
+    })
     .catch(({message}) => failHandler(state, message))
 }
 
