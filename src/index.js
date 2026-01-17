@@ -1,6 +1,7 @@
 import app from './app'
 import {STATUS_FORM} from './const'
-import {i18} from './locales'
+import i18next from 'i18next';
+import {LANGUAGES, ru} from './locales'
 import './style.css'
 
 const initalState = {
@@ -13,5 +14,13 @@ const initalState = {
   }
 }
 
-i18.init()
-  .then((translation) => app(initalState, translation))
+const translateConfig = {
+  lng: LANGUAGES.RU,
+  debug: true,
+  resources: {ru}
+}
+
+app(
+  initalState,
+  i18next.createInstance({translateConfig})
+)

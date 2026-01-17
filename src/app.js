@@ -39,14 +39,15 @@ const createHandlerSubmit = (state) => (e) => {
     // .catch(({message}) => failHandler(state, message))
 }
 
-export default (initalState, translation) => {
-  const form = document.querySelector('.rss-form')
+export default (initalState, i18) => {
+  i18.init().then((translation) => {
+    const form = document.querySelector('.rss-form')
 
-  // create State
-  const {render} = initView(translation)
+    // create State
+    const {render} = initView(translation)
+    const state = onChange(initalState, render);
 
-  const state = onChange(initalState, render);
-
-  const handlerSubmit = createHandlerSubmit(state)
-  form.addEventListener('submit', handlerSubmit)
+    const handlerSubmit = createHandlerSubmit(state)
+    form.addEventListener('submit', handlerSubmit)
+  })
 }
