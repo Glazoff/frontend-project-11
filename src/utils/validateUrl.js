@@ -1,10 +1,10 @@
-import {string} from 'yup'
+import {string} from 'yup';
 
 export const validateUrl = (url, state) => {
   const schema = string()
     .required()
     .url('url_invalid')
-    .notOneOf(state.feeds, 'url_same');
+    .notOneOf(state.rssUrls, 'url_same');
     
-  return schema.validate(url)
-}
+  return schema.validate(url);
+};

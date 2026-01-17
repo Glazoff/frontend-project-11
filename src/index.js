@@ -1,15 +1,26 @@
-import app from './app'
-import {STATUS_FORM} from './const'
-import {i18} from './locales'
-import './style.css'
+import app from './app';
+import {STATUS_FORM} from './const';
+import i18next from 'i18next';
+import {LANGUAGES, ru} from './locales';
+import './style.css';
 
 const initalState = {
   feeds: [],
+  rssUrls: [],
+  posts: [],
   stateForm: {
     status: STATUS_FORM.VALID, // valid / invalid
     errors: [],
-  }
-}
+  },
+};
 
-i18.init()
-  .then((t) => app(initalState, t))
+const translateConfig = {
+  lng: LANGUAGES.RU,
+  debug: false,
+  resources: {ru},
+};
+
+app(
+  initalState,
+  i18next.createInstance(translateConfig),
+);
