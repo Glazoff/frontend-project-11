@@ -9,14 +9,7 @@ function renderTextDanger(errors, translation) {
   }
 
   errors.forEach(err => {
-    switch(err) {
-      case 'url_invalid':
-        textDanger.textContent = translation('errors.url_invalid');
-        break;
-      case 'url_same':
-        textDanger.textContent = translation('errors.url_same');
-        break;
-    }
+    textDanger.textContent = translation(`errors.${err}`);
   });
 }
 

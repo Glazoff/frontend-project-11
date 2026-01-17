@@ -4,6 +4,7 @@ import {validateUrl} from './utils/validateUrl';
 import {STATUS_FORM} from './const';
 import {getPosts} from './utils/axios';
 import {xmlParser} from './utils/parser';
+import {AxiosError} from 'axios';
 
 const successHandler = (state, url, feed, posts) => {
   const input = document.getElementById('url-input');
@@ -22,6 +23,22 @@ const failValidate = (state, errors) => {
   state.stateForm.status = STATUS_FORM.INVALID;
 };
 
+const failLoad = (state, errors) => {
+  state.stateForm.errors.push(errors);
+  state.stateForm.status = STATUS_FORM.INVALID;
+};
+
+const handlerError = (name, message, state) => {
+  switch (name) {
+    case 'ValidationError':
+      failValidate(state, message);
+      break;
+    case 'AxiosError':
+      failLoad(state, message);
+      break;
+  }
+};
+
 const createHandlerSubmit = (state) => (e) => {
   e.preventDefault();
   state.stateForm.errors = [];
@@ -30,16 +47,18 @@ const createHandlerSubmit = (state) => (e) => {
   const url = data.get('url').trim();
 
   validateUrl(url, state)
-    .catch(({message}) => {
-      failValidate(state, message);
-      return Promise.reject(message);
-    })
     .then(() => getPosts(url))
     .then(({data}) => {
-      const {feed, posts} = xmlParser(data.contents);
+      const {contents, status} = data;
+
+      if (status.http_code !== 200) throw new AxiosError('is_not_rss'); 
+
+      const {feed, posts} = xmlParser(contents);
       successHandler(state, url, feed, posts);
     })
-    .catch((error) => console.error(error));
+    .catch(({name, message}) => {
+      handlerError(name, message, state);
+    });
 };
 
 export default (initalState, i18) => {
