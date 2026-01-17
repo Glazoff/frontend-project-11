@@ -1,53 +1,55 @@
-import onChange from 'on-change'
+import onChange from 'on-change';
 import {initView} from './view';
-import {validateUrl} from './utils/validateUrl'
-import {STATUS_FORM} from './const'
+import {validateUrl} from './utils/validateUrl';
+import {STATUS_FORM} from './const';
 import {getPosts} from './utils/axios';
-import {xmlParser} from './utils/parser'
+import {xmlParser} from './utils/parser';
 
 const successHandler = (state, url, feed, posts) => {
-  const input = document.getElementById('url-input')
+  const input = document.getElementById('url-input');
 
-  input.value = ''
-  input.focus()
-  state.rssUrls.push(url)
-  state.feeds.push(feed)
-  state.posts.push(...posts)
-  state.stateForm.errors = []
-  state.stateForm.status = STATUS_FORM.VALID
-}
+  input.value = '';
+  input.focus();
+  state.rssUrls.push(url);
+  state.feeds.push(feed);
+  state.posts.push(...posts);
+  state.stateForm.errors = [];
+  state.stateForm.status = STATUS_FORM.VALID;
+};
 
-const failHandler = (state, errors) => {
-  state.stateForm.errors.push(errors)
-  state.stateForm.status = STATUS_FORM.INVALID
-}
+const failValidate = (state, errors) => {
+  state.stateForm.errors.push(errors);
+  state.stateForm.status = STATUS_FORM.INVALID;
+};
 
 const createHandlerSubmit = (state) => (e) => {
-  e.preventDefault()
-  state.stateForm.errors = []
+  e.preventDefault();
+  state.stateForm.errors = [];
 
-  const data = new FormData(e.target)
-  const url = data.get('url').trim()
+  const data = new FormData(e.target);
+  const url = data.get('url').trim();
 
   validateUrl(url, state)
+    .catch(({message}) => {
+      failValidate(state, message);
+      return Promise.reject(message);
+    })
     .then(() => getPosts(url))
     .then(({data}) => {
-      const {feed, posts} = xmlParser(data.contents)
-  
-      successHandler(state, url, feed, posts)
+      const {feed, posts} = xmlParser(data.contents);
+      successHandler(state, url, feed, posts);
     })
-    // .catch(({message}) => failHandler(state, message))
-}
+    .catch((error) => console.error(error));
+};
 
 export default (initalState, i18) => {
   i18.init().then((translation) => {
-    const form = document.querySelector('.rss-form')
+    const form = document.querySelector('.rss-form');
 
-    // create State
-    const {render} = initView(translation)
+    const {render} = initView(translation);
     const state = onChange(initalState, render);
 
-    const handlerSubmit = createHandlerSubmit(state)
-    form.addEventListener('submit', handlerSubmit)
-  })
-}
+    const handlerSubmit = createHandlerSubmit(state);
+    form.addEventListener('submit', handlerSubmit);
+  });
+};

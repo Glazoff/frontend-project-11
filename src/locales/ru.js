@@ -6,6 +6,6 @@ export default {
     },
     posts: 'Посты',
     feeds: 'Фиды',
-    show: 'Просмотр'
-  }
-}
+    show: 'Просмотр',
+  },
+};

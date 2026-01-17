@@ -1,7 +1,7 @@
-import ru from './ru'
+import ru from './ru';
 
 const LANGUAGES = {
-  RU: 'ru'
-}
+  RU: 'ru',
+};
 
-export {ru, LANGUAGES}
+export {ru, LANGUAGES};
