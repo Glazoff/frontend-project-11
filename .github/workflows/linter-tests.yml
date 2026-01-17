@@ -7,7 +7,7 @@ on:
   - pull_request
 
 jobs:
-  build:
+  lint-and-test:
     # The type of machine to run the job on
     runs-on: ubuntu-latest
 
@@ -20,7 +20,7 @@ jobs:
       # Check-out repository under GitHub workspace
       # https://github.com/actions/checkout
       - uses: actions/checkout@v5
-        # Step's name
+        
       - name: Use Node.js ${{ matrix.node-version }}
         # Configures the node version used on GitHub-hosted runners
         # https://github.com/actions/setup-node
@@ -29,17 +29,22 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: npm install, build
-        # Install and build project
-        run: |
-          make install
-          make build
-        # Add environment variables
+      # 1. Устанавливаем зависимости
+      - name: Install dependencies
+        run: make install
         env:
           CI: true
 
+      # 2. Сначала запускаем линтер на исходном коде
       - name: Run linter
         run: make lint
 
+      # 3. Затем собираем проект
+      - name: Build project
+        run: make build
+        env:
+          CI: true
+
+      # 4. И только потом запускаем тесты
       - name: Run tests
         run: make test
