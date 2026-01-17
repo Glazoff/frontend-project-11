@@ -1,6 +1,6 @@
 import {STATUS_FORM} from './const';
 
-function renderTextDanger(errors, i18) {
+function renderTextDanger(errors, translation) {
   const textDanger = document.querySelector('.text-danger');
 
   if (!errors.length) {
@@ -11,10 +11,10 @@ function renderTextDanger(errors, i18) {
   errors.forEach(err => {
     switch(err) {
       case 'url_invalid':
-        textDanger.textContent = i18('errors.url_invalid');
+        textDanger.textContent = translation('errors.url_invalid');
         break;
       case 'url_same':
-        textDanger.textContent = i18('errors.url_same');
+        textDanger.textContent = translation('errors.url_same');
         break;
     }
   });
@@ -23,9 +23,11 @@ function renderTextDanger(errors, i18) {
 function getTitleNode(text) {
   const wrapper = document.createElement('div');
   wrapper.classList.add('card-body');
+
   const title = document.createElement('h2');
   title.classList.add(['card-title', 'h4']);
   title.textContent = text;
+
   wrapper.appendChild(title);
   return wrapper;
 }
@@ -41,19 +43,19 @@ function renderInput(status) {
   formControl.classList.remove('is-invalid');
 }
 
-function renderPosts(posts, i18) {
+function renderPosts(posts, translation) {
   const container = document.querySelector('.posts');
-  console.log('renderPosts', posts);
   container.innerHTML = '';
 
   if (posts.length) {
-    const nodeTitle = getTitleNode(i18('posts'));
+    const nodeTitle = getTitleNode(translation('posts'));
     const list = document.createElement('ul');
     list.classList.add('list-group', 'border-0', 'rounded-0');
 
     posts.forEach(({title, link}) => {
       const itemList = document.createElement('li');
       itemList.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+
       const linkPost = document.createElement('a');
       linkPost.classList.add('fw-bold');
       linkPost.setAttribute('href', link);
@@ -61,36 +63,60 @@ function renderPosts(posts, i18) {
 
       const button = document.createElement('button');
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-      button.textContent = i18('show');
-      itemList.appendChild(linkPost);
-      itemList.appendChild(button);
+      button.textContent = translation('show');
+
+      itemList.append(linkPost, button);
+      list.appendChild(itemList);
+    });
+
+    container.append(nodeTitle, list);
+  }
+} 
+
+function renderFeeds(feeds, translation) {
+  const container = document.querySelector('.feeds');
+  container.innerHTML = '';
+
+  if (feeds.length) {
+    const nodeTitle = getTitleNode(translation('feeds'));
+    const list = document.createElement('ul');
+    list.classList.add('list-group', 'border-0', 'rounded-0');
+
+    feeds.forEach(({title, description}) => {
+      const itemList = document.createElement('li');
+      itemList.classList.add('list-group-item', 'border-0', 'rounded-0');
+
+      const titleFeed = document.createElement('h3');
+      titleFeed.classList.add('h6', 'm-0');
+      titleFeed.textContent = title;
+
+      const descFeed = document.createElement('p');
+      descFeed.classList.add('m-0', 'small', 'text-black-50');
+      descFeed.textContent = description;
+
+      itemList.append(titleFeed, descFeed);
 
       list.appendChild(itemList);
     });
 
-    container.appendChild(nodeTitle);
-    container.appendChild(list);
+    container.append(nodeTitle, list);
   }
-} 
-
-function renderFeeds(feeds) {
-  console.log('renderFeeds', feeds);
 }
 
-const initView = (i18) => {
+const initView = (translation) => {
   function render(path, value) {
     switch(path) {
       case 'stateForm.errors':
-        renderTextDanger(value, i18);
+        renderTextDanger(value, translation);
         break;
       case 'stateForm.status':
         renderInput(value);
         break;
       case 'posts':
-        renderPosts(value, i18);
+        renderPosts(value, translation);
         break;
       case 'feeds':
-        renderFeeds(value);
+        renderFeeds(value, translation);
         break;
     }
   }

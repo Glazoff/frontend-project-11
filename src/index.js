@@ -16,11 +16,11 @@ const initalState = {
 
 const translateConfig = {
   lng: LANGUAGES.RU,
-  debug: true,
+  debug: false,
   resources: {ru},
 };
 
 app(
   initalState,
-  i18next.createInstance({translateConfig}),
+  i18next.createInstance(translateConfig),
 );
