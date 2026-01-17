@@ -5,6 +5,8 @@ import {STATUS_FORM} from './const';
 import {getPosts} from './utils/axios';
 import {xmlParser} from './utils/parser';
 import {AxiosError} from 'axios';
+import {uniqueId} from 'lodash';
+import {checkerUpdate} from './utils/checkerUpdate';
 
 const successHandler = (state, url, feed, posts) => {
   const input = document.getElementById('url-input');
@@ -54,7 +56,14 @@ const createHandlerSubmit = (state) => (e) => {
       if (status.http_code !== 200) throw new AxiosError('is_not_rss'); 
 
       const {feed, posts} = xmlParser(contents);
-      successHandler(state, url, feed, posts);
+      
+      const feedId = uniqueId();
+      feed.id = feedId;
+      const uniquePosts =  posts.map((p) =>  ({id: uniqueId(), feedId, ...p}));
+
+      successHandler(state, url, feed, uniquePosts);
+
+      setTimeout(checkerUpdate, 5000, url, feedId, state);
     })
     .catch(({name, message}) => {
       handlerError(name, message, state);
