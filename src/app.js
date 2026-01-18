@@ -15,7 +15,7 @@ const successHandler = (state, url, feed, posts) => {
   input.focus();
   state.rssUrls.push(url);
   state.feeds.push(feed);
-  state.posts.push(...posts);
+  state.posts = [...posts, ...state.posts];
   state.stateForm.errors = [];
   state.stateForm.status = STATUS_FORM.VALID;
 };
@@ -59,7 +59,7 @@ const createHandlerSubmit = (state) => (e) => {
       
       const feedId = uniqueId();
       feed.id = feedId;
-      const uniquePosts =  posts.map((p) =>  ({id: uniqueId(), feedId, ...p}));
+      const uniquePosts =  posts.map((p) =>  ({id: uniqueId(), isViewed: false, feedId, ...p}));
 
       successHandler(state, url, feed, uniquePosts);
 
@@ -70,12 +70,49 @@ const createHandlerSubmit = (state) => (e) => {
     });
 };
 
+const createHandlerOpenModal = () => {
+  let state = null;
+
+  const setState = (value) => {
+    state = value;
+  };
+
+  const openModal = ({id}) => {
+    if (state) {
+      state.posts.forEach(post => {
+        if (post.id === id) {
+          post.isViewed = true;
+
+          state.currentModal = post;
+        }
+      });
+    }
+  };
+
+  const closeModal = () => {
+    state.currentModal = null;
+  };
+
+  return {
+    setState,
+    openModal,
+    closeModal,
+  };
+};
+
 export default (initalState, i18) => {
   i18.init().then((translation) => {
     const form = document.querySelector('.rss-form');
 
-    const {render} = initView(translation);
+    const {openModal, closeModal, setState} = createHandlerOpenModal();
+
+    const {render} = initView(translation, {
+      openModal,
+      closeModal,
+    });
+
     const state = onChange(initalState, render);
+    setState(state);
 
     const handlerSubmit = createHandlerSubmit(state);
     form.addEventListener('submit', handlerSubmit);

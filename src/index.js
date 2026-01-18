@@ -8,6 +8,7 @@ const initalState = {
   feeds: [],
   rssUrls: [],
   posts: [],
+  currentModal: null,
   stateForm: {
     status: STATUS_FORM.VALID, // valid / invalid
     errors: [],

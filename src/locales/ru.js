@@ -8,5 +8,7 @@ export default {
     posts: 'Посты',
     feeds: 'Фиды',
     show: 'Просмотр',
+    close: 'Закрыть',
+    readAll: 'Читать полностью',
   },
 };
