@@ -58,28 +58,80 @@ function renderModal(modalInfo, translation, closeModal) {
   document.body.appendChild(backdrop);
 }
 
-function renderTextDanger(errors, translation) {
-  const textDanger = document.querySelector('.text-danger');
+function renderFeedback({status, messages = [], translation}) {
+  const textFeedback = document.querySelector('.feedback');
+  textFeedback.classList.remove('text-success', 'text-danger');
 
-  if (!errors.length) {
-    textDanger.textContent = '';
-    return;
+  if (messages.length) {
+    messages.forEach(m => {
+      textFeedback.textContent = translation(`${m}`);
+    });
+  } else {
+    textFeedback.textContent = '';
   }
 
-  errors.forEach(err => {
-    textDanger.textContent = translation(`errors.${err}`);
-  });
+  switch (status) {
+    case STATUS_FORM.VALID:
+      textFeedback.classList.add('text-success');
+      break;
+    case STATUS_FORM.INVALID:
+      textFeedback.classList.add('text-danger');
+      break;
+  }
 }
 
 function renderInput(status) {
-  const formControl = document.querySelector('.form-control');
+  const input = document.getElementById('url-input');
 
-  if (status === STATUS_FORM.INVALID) {
-    formControl.classList.add('is-invalid');
-    return;
+  switch (status) {
+    case STATUS_FORM.SENDING:
+      input.readOnly = true;
+      break;
+    case STATUS_FORM.INVALID:
+      input.classList.add('is-invalid');
+      break;
+    default:
+      input.readOnly = false;
+      input.classList.remove('is-invalid');
+      break;
   }
+}
 
-  formControl.classList.remove('is-invalid');
+function renderButtonSubmit(status) {
+  const button = document.querySelector('button[type="submit"]');
+
+  if (status === STATUS_FORM.SENDING) {
+    button.disabled = true;
+  } else {
+    button.disabled = false;
+  }
+}
+
+function renderForm(stateForm, translation) {
+  const {status, errors} = stateForm;
+  switch (status) {
+    case STATUS_FORM.VALID:
+    { renderInput(status);
+      const messages = [translation('success')];
+      renderFeedback({status, messages, translation});
+      renderButtonSubmit(status);
+      break; }
+    case STATUS_FORM.INVALID:
+      renderInput(status);
+      renderFeedback({status, messages: errors, translation});
+      renderButtonSubmit(status);
+      break;
+    case STATUS_FORM.SENDING:
+      renderInput(status);
+      renderButtonSubmit(status);
+      break;
+    case STATUS_FORM.FILLING:
+      renderInput(status);
+      renderButtonSubmit(status);
+      break;
+    default:
+      break;
+  }
 }
 
 function renderPosts(posts, translation, openModal) {
@@ -158,11 +210,9 @@ const initView = (translation, callbacks) => {
     const {openModal, closeModal} = callbacks;
 
     switch(path) {
-      case 'stateForm.errors':
-        renderTextDanger(value, translation);
-        break;
       case 'stateForm.status':
-        renderInput(value);
+      case 'stateForm.errors':
+        renderForm(this.stateForm, translation);
         break;
       case 'posts':
         renderPosts(value, translation, openModal);

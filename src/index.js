@@ -10,7 +10,7 @@ const initalState = {
   posts: [],
   currentModal: null,
   stateForm: {
-    status: STATUS_FORM.VALID, // valid / invalid
+    status: STATUS_FORM.FILLING,
     errors: [],
   },
 };

@@ -11,6 +11,7 @@ import {checkerUpdate} from './utils/checkerUpdate';
 const successHandler = (state, url, feed, posts) => {
   const input = document.getElementById('url-input');
 
+  // TODO вынести в view
   input.value = '';
   input.focus();
   state.rssUrls.push(url);
@@ -49,7 +50,10 @@ const createHandlerSubmit = (state) => (e) => {
   const url = data.get('url').trim();
 
   validateUrl(url, state)
-    .then(() => getPosts(url))
+    .then(() => {
+      state.stateForm.status = STATUS_FORM.SENDING;
+      return getPosts(url);
+    })
     .then(({data}) => {
       const {contents, status} = data;
 
@@ -67,7 +71,8 @@ const createHandlerSubmit = (state) => (e) => {
     })
     .catch(({name, message}) => {
       handlerError(name, message, state);
-    });
+    })
+    .finally(() => state.stateForm.status = STATUS_FORM.FILLING);
 };
 
 const createHandlerOpenModal = () => {
