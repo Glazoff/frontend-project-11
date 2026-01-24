@@ -3,8 +3,9 @@ const xmlParser = (source) => {
 
   const parseError = xml.querySelector('parsererror');
   if (parseError) {
-    const textError = parseError.textContent;
-    throw new Error(textError);
+    const error = new Error('is_not_rss');
+    error.name = 'ParseError';
+    throw error;
   }
 
   const feed = {
