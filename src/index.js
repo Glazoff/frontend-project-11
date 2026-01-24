@@ -1,8 +1,8 @@
-import app from './app';
-import {STATUS_FORM} from './const';
-import i18next from 'i18next';
-import {LANGUAGES, ru} from './locales';
-import './style.css';
+import app from './app'
+import { STATUS_FORM } from './const'
+import i18next from 'i18next'
+import { LANGUAGES, ru } from './locales'
+import './style.css'
 
 const initalState = {
   feeds: [],
@@ -13,15 +13,15 @@ const initalState = {
     status: STATUS_FORM.FILLING,
     errors: [],
   },
-};
+}
 
 const translateConfig = {
   lng: LANGUAGES.RU,
   debug: false,
-  resources: {ru},
-};
+  resources: { ru },
+}
 
 app(
   initalState,
   i18next.createInstance(translateConfig),
-);
+)

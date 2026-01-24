@@ -3,4 +3,4 @@ export const STATUS_FORM = {
   INVALID: 'invalid',
   SENDING: 'sending',
   FILLING: 'filling',
-};
+}

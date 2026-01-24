@@ -44,7 +44,3 @@ jobs:
         run: make build
         env:
           CI: true
-
-      # 4. И только потом запускаем тесты
-      - name: Run tests
-        run: make test

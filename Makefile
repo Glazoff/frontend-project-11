@@ -11,4 +11,4 @@ build:
 	NODE_ENV=production npm run build
 
 test:
-	echo no tests
+	npm run test

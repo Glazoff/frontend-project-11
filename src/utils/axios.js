@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from 'axios'
 
-const PROXY_URL = 'https://allorigins.hexlet.app/get?disableCache=true&url=';
+const PROXY_URL = 'https://allorigins.hexlet.app/get?disableCache=true&url='
 
 const getPosts = (ulr) => {
-  return axios.get(PROXY_URL + encodeURIComponent(ulr));
-};
+  return axios.get(PROXY_URL + encodeURIComponent(ulr))
+}
 
-export {getPosts};
+export { getPosts }
